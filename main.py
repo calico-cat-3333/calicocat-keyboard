@@ -7,11 +7,12 @@ from kmk.keys import KC
 
 from kmk.modules.layers import Layers
 from kmk.modules.mouse_keys import MouseKeys
-from kmk.extensions.RGB import RGB, AnimationModes
+from extra_rgb_effect import RGB, AnimationModes
 from kmk.extensions.media_keys import MediaKeys
 
 keyboard = KMKKeyboard()
-rgb = RGB(pixel_pin=board.GP28, num_pixels=86, val_limit = 10, val_step = 1, animation_mode=AnimationModes.RAINBOW)
+rgb = RGB(pixel_pin=board.GP28, num_pixels=86, val_limit = 10, val_step = 1, animation_mode=AnimationModes.USER)
+rgb.user_animation = rgb.user_animation_stream
 
 keyboard.modules.append(Layers())
 keyboard.modules.append(MouseKeys())
