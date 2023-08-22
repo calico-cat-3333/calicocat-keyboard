@@ -4,15 +4,19 @@ import board
 
 from kb import KMKKeyboard
 from kmk.keys import KC
+
 from kmk.modules.layers import Layers
-from kmk.extensions.RGB import RGB
-from kmk.extensions.rgb import AnimationModes
+from kmk.extensions.media_keys import MediaKeys
+from kmk.modules.mouse_keys import mouse_keys
+from kmk.extensions.RGB import RGB, AnimationModes
 
 
 keyboard = KMKKeyboard()
 rgb = RGB(pixel_pin=board.GP28, num_pixels=86, val_limit = 10, animation_mode=AnimationModes.RAINBOW)
 
 keyboard.modules.append(Layers())
+keyboard.extensions.append(MediaKeys())
+keyboard.modules.append(MouseKeys())
 keyboard.extensions.append(rgb)
 
 keyboard.keymap = [[
@@ -22,7 +26,7 @@ keyboard.keymap = [[
     KC.CAPS, KC.A,    KC.S,    KC.D,    KC.F,    KC.G,    KC.H,    KC.J,    KC.K,    KC.L,    KC.SCLN, KC.QUOT, KC.ENT,  KC.PGUP,
     KC.LSFT, KC.Z,    KC.X,    KC.C,    KC.V,    KC.B,    KC.N,    KC.M,    KC.COMM, KC.DOT,  KC.SLSH, KC.RSFT, KC.UP,   KC.PGDN,
     KC.LCTL, KC.KP_1, KC.LGUI, KC.LALT, KC.SPC,  KC.SPC,  KC.RALT, KC.APP,  KC.RCTL, KC.LEFT, KC.DOWN, KC.RGHT,
-    KC.KP_2, KC.KP_3, KC.KP_4,
+    KC.MUTE, KC.VOLD, KC.VOLU,
         ]]
 
 if __name__ == '__main__':
