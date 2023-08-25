@@ -10,6 +10,10 @@ from adafruit_st7789 import ST7789
 from kmk.extensions.lock_status import LockStatus
 from kmk.extensions import Extension
 
+bitmap = displayio.OnDiskBitmap("spritemap.bmp")
+palette = bitmap.pixel_shader
+palette.make_transparent(0)
+
 displayio.release_displays()
 
 spi = busio.SPI(clock = board.GP2, MOSI = board.GP3)
@@ -20,57 +24,61 @@ tft_rs = board.GP4
 display_bus = displayio.FourWire(spi, command=tft_dc, chip_select=tft_cs, reset = tft_rs)
 display = ST7789(display_bus, rotation=270, width=240, height=135, rowstart=40, colstart=53)
 
-splash = displayio.Group()
-display.show(splash)
 
-text_lock = label.Label(terminalio.FONT, text=' '*11, color=0xFFFFFF, scale=3, x=20, y=30, anchor_point=(0.0, 0.0))
-text_layer = label.Label(terminalio.FONT, text=' '*11, color=0xFFFFFF, scale=3, x=20, y=70, anchor_point=(0.0, 0.0))
-text_layer.text = 'Starting...'
+tilegrid_numlock = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=10, x=0, y=0)
+tilegrid_caplock = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=10, x=20, y=0)
+tilegrid_scrlock = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=10, x=40, y=0)
 
-splash.append(text_lock)
-splash.append(text_layer)
 
+
+tilegrid_layer = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=4, x=0, y=0)
+tilegrid_cat = displayio.TileGrid(bitmap, pixel_shader=palette, width=2, tile_width=16, tile_height=16, x=30, y=0)
+tilegrid_cat[0] = 8
+tilegrid_cat[1] = 9
+
+def update_disp():
+    splash = displayio.Group()
+    group_lock = displayio.Group(scale=3, x=20, y=10)
+    group_lock.append(tilegrid_numlock)
+    group_lock.append(tilegrid_caplock)
+    group_lock.append(tilegrid_scrlock)
+    group_layer = displayio.Group(scale=3, x=20, y=70)
+    group_layer.append(tilegrid_layer)
+    group_layer.append(tilegrid_cat)
+    splash.append(group_lock)
+    splash.append(group_layer)
+
+    display.show(splash)
 
 
 class LCDLockStatus(LockStatus):
     def update_text(self):
-        at = supervisor.ticks_ms()
-        s = ''
         if self.get_num_lock():
-            s += '[1]'
+            tilegrid_numlock[0] = 0
         else:
-            s += '[ ]'
-        s += ' '
+            tilegrid_numlock[0] = 10
         if self.get_caps_lock():
-            s += '[A]'
+            tilegrid_caplock[0] = 1
         else:
-            s += '[a]'
-        s += ' '
+            tilegrid_caplock[0] = 3
         if self.get_scroll_lock():
-            s += '[S]'
+            tilegrid_scrlock[0] = 2
         else:
-            s += '[ ]'
-        text_lock.text = s
-        print('lock status timeuse:',supervisor.ticks_ms()-at)
+            tilegrid_scrlock[0] = 10
 
     def after_hid_send(self, sandbox):
         super().after_hid_send(sandbox)  # Critically important. Do not forget
         if self.report_updated:
+            at = supervisor.ticks_ms()
             self.update_text()
+            print('lock status timeuse:',supervisor.ticks_ms()-at)
 
 class LCDLayerStatus(Extension):
-    def __init__(self, prompt='Layer: ', layer_names=None):
+    def __init__(self):
         self._onscreen_layer = -1
-        self.prompt = prompt
-        self.layer_names = layer_names
 
     def update_text(self, layer):
-        s = self.prompt
-        if self.layer_names == None:
-            s += str(layer)
-        else:
-            s += self.layer_names[layer]
-        text_layer.text = s
+        tilegrid_layer[0] = layer + 4
 
     def on_runtime_enable(self, sandbox):
         return
@@ -79,7 +87,7 @@ class LCDLayerStatus(Extension):
         return
 
     def during_bootup(self, sandbox):
-        return
+        update_disp()
 
     def before_matrix_scan(self, sandbox):
         return

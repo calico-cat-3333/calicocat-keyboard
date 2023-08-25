@@ -31,7 +31,7 @@ keyboard.modules.append(MouseKeys())
 keyboard.extensions.append(rgb)
 keyboard.extensions.append(MediaKeys())
 keyboard.extensions.append(lcd.LCDLockStatus())
-keyboard.extensions.append(lcd.LCDLayerStatus('',['Normal', 'Fn', 'Mouse']))
+keyboard.extensions.append(lcd.LCDLayerStatus())
 
 keyboard.keymap = [[
     KC.ESC,  KC.F1,   KC.F2,   KC.F3,   KC.F4,   KC.F5,   KC.F6,   KC.F7,   KC.F8,   KC.F9,   KC.F10,  KC.F11,  KC.F12,  KC.PSCR, KC.INS,  KC.DEL,
