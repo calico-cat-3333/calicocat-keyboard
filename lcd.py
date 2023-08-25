@@ -24,31 +24,18 @@ tft_rs = board.GP4
 display_bus = displayio.FourWire(spi, command=tft_dc, chip_select=tft_cs, reset = tft_rs)
 display = ST7789(display_bus, rotation=270, width=240, height=135, rowstart=40, colstart=53)
 
+splash = displayio.Group()
 
+group_lock = displayio.Group(scale=3, x=20, y=10)
 tilegrid_numlock = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=10, x=0, y=0)
 tilegrid_caplock = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=10, x=20, y=0)
 tilegrid_scrlock = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=10, x=40, y=0)
 
-
-
+group_layer = displayio.Group(scale=3, x=20, y=70)
 tilegrid_layer = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=4, x=0, y=0)
 tilegrid_cat = displayio.TileGrid(bitmap, pixel_shader=palette, width=2, tile_width=16, tile_height=16, x=30, y=0)
 tilegrid_cat[0] = 8
 tilegrid_cat[1] = 9
-
-def update_disp():
-    splash = displayio.Group()
-    group_lock = displayio.Group(scale=3, x=20, y=10)
-    group_lock.append(tilegrid_numlock)
-    group_lock.append(tilegrid_caplock)
-    group_lock.append(tilegrid_scrlock)
-    group_layer = displayio.Group(scale=3, x=20, y=70)
-    group_layer.append(tilegrid_layer)
-    group_layer.append(tilegrid_cat)
-    splash.append(group_lock)
-    splash.append(group_layer)
-
-    display.show(splash)
 
 
 class LCDLockStatus(LockStatus):
@@ -69,9 +56,9 @@ class LCDLockStatus(LockStatus):
     def after_hid_send(self, sandbox):
         super().after_hid_send(sandbox)  # Critically important. Do not forget
         if self.report_updated:
-            at = supervisor.ticks_ms()
+            #at = supervisor.ticks_ms()
             self.update_text()
-            print('lock status timeuse:',supervisor.ticks_ms()-at)
+            #print('lock status timeuse:',supervisor.ticks_ms()-at)
 
 class LCDLayerStatus(Extension):
     def __init__(self):
@@ -87,17 +74,24 @@ class LCDLayerStatus(Extension):
         return
 
     def during_bootup(self, sandbox):
-        update_disp()
+        group_lock.append(tilegrid_numlock)
+        group_lock.append(tilegrid_caplock)
+        group_lock.append(tilegrid_scrlock)
+        group_layer.append(tilegrid_layer)
+        group_layer.append(tilegrid_cat)
+        splash.append(group_lock)
+        splash.append(group_layer)
+        display.show(splash)
 
     def before_matrix_scan(self, sandbox):
         return
 
     def after_matrix_scan(self, sandbox):
         if self._onscreen_layer != sandbox.active_layers[0]:
-            at = supervisor.ticks_ms()
+            #at = supervisor.ticks_ms()
             self.update_text(sandbox.active_layers[0])
             self._onscreen_layer = sandbox.active_layers[0]
-            print('layer status timeuse:',supervisor.ticks_ms()-at)
+            #print('layer status timeuse:',supervisor.ticks_ms()-at)
 
     def before_hid_send(self, sandbox):
         return
