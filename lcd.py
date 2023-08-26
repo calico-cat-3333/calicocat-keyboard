@@ -27,9 +27,9 @@ display = ST7789(display_bus, rotation=270, width=240, height=135, rowstart=40, 
 splash = displayio.Group()
 
 group_lock = displayio.Group(scale=3, x=20, y=10)
-tilegrid_numlock = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=10, x=0, y=0)
-tilegrid_caplock = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=10, x=20, y=0)
-tilegrid_scrlock = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=10, x=40, y=0)
+tilegrid_numlock = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=7, x=0, y=0)
+tilegrid_caplock = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=7, x=20, y=0)
+tilegrid_scrlock = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=7, x=40, y=0)
 
 group_layer = displayio.Group(scale=3, x=20, y=70)
 tilegrid_layer = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=4, x=0, y=0)
@@ -43,7 +43,7 @@ class LCDLockStatus(LockStatus):
         if self.get_num_lock():
             tilegrid_numlock[0] = 0
         else:
-            tilegrid_numlock[0] = 10
+            tilegrid_numlock[0] = 7
         if self.get_caps_lock():
             tilegrid_caplock[0] = 1
         else:
@@ -51,7 +51,7 @@ class LCDLockStatus(LockStatus):
         if self.get_scroll_lock():
             tilegrid_scrlock[0] = 2
         else:
-            tilegrid_scrlock[0] = 10
+            tilegrid_scrlock[0] = 7
 
     def after_hid_send(self, sandbox):
         super().after_hid_send(sandbox)  # Critically important. Do not forget
@@ -65,7 +65,10 @@ class LCDLayerStatus(Extension):
         self._onscreen_layer = -1
 
     def update_text(self, layer):
-        tilegrid_layer[0] = layer + 4
+        if layer in [0, 1, 2]:
+            tilegrid_layer[0] = layer + 4
+        else:
+            tilegrid_layer[0] = 4
 
     def on_runtime_enable(self, sandbox):
         return
