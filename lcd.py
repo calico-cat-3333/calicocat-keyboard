@@ -28,8 +28,8 @@ splash = displayio.Group()
 
 group_lock = displayio.Group(scale=3, x=20, y=10)
 tilegrid_numlock = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=7, x=0, y=0)
-tilegrid_caplock = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=7, x=20, y=0)
-tilegrid_scrlock = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=7, x=40, y=0)
+tilegrid_caplock = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=3, x=20, y=0)
+tilegrid_scrlock = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=11, x=40, y=0)
 
 group_layer = displayio.Group(scale=3, x=20, y=70)
 tilegrid_layer = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=4, x=0, y=0)
@@ -51,7 +51,7 @@ class LCDLockStatus(LockStatus):
         if self.get_scroll_lock():
             tilegrid_scrlock[0] = 2
         else:
-            tilegrid_scrlock[0] = 7
+            tilegrid_scrlock[0] = 11
 
     def after_hid_send(self, sandbox):
         super().after_hid_send(sandbox)  # Critically important. Do not forget
