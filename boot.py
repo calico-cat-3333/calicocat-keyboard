@@ -1,4 +1,5 @@
 import board
+
 from kmk.bootcfg import bootcfg
 
 bootcfg(
@@ -10,6 +11,5 @@ bootcfg(
     cdc = False,
     midi = False,
     nkro = True,
-    pan = True,
     storage = False,
 )
