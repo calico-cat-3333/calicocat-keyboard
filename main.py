@@ -21,7 +21,6 @@ rgb = RGB(
     val_default=20,
     val_step=1,
     animation_mode=AnimationModes.USER,
-    disable_auto_write=True,
     user_animation=user_animations.stream,
     refresh_rate=30
 )
