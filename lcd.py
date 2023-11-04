@@ -4,7 +4,6 @@ import displayio
 import busio
 import supervisor
 
-from adafruit_display_text import label
 from adafruit_st7789 import ST7789
 
 from kmk.extensions.lock_status import LockStatus
