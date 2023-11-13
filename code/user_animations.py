@@ -23,9 +23,10 @@ def init_rgb_modes_cycle_key(rgb):
         AnimationModes.RAINBOW,
         AnimationModes.BREATHING_RAINBOW,
         AnimationModes.KNIGHT,
-        AnimationModes.SWIRL,
-        AnimationModes.USER
+        AnimationModes.SWIRL
     ]
+    if not rgb.user_animation == None:
+        rgb_modes_list.append(AnimationModes.USER)
     rgb_modes_num = len(rgb_modes_list)
     def rgb_modes_cycle(*args, **kwargs):
         rgb.effect_init = True
