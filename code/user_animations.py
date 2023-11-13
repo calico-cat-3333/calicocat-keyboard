@@ -7,12 +7,12 @@ import supervisor
 # animations
 stream_info = [0, 0] # first led color, led index
 def stream(rgb):
-    for i in range(20):
+    for i in range(rgb.num_pixels/2):
         led_color = (stream_info[0] + rgb.hue_step * stream_info[1]) % 256
         rgb.set_hsv(led_color, rgb.sat, rgb.val, stream_info[1])
         stream_info[1] = (stream_info[1] + 1) % rgb.num_pixels
         if stream_info[1] == 0:
-            stream_info[0] = (stream_info[0] + 1) % 256
+            stream_info[0] = (stream_info[0] + rgb._step) % 256
 
 # 添加 RGB_MODES_CYCLE / RGB_CYC 按键，暂时放这
 # add RGB_MODES_CYCLE / RGB_CYC key

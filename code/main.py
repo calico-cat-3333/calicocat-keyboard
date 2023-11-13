@@ -20,6 +20,7 @@ rgb = RGB(
     val_limit=30,
     val_default=20,
     val_step=1,
+    animation_speed=4,
     animation_mode=AnimationModes.USER,
     user_animation=user_animations.stream,
     refresh_rate=30
