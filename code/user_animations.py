@@ -16,50 +16,35 @@ rgb_index = [
 
 # animations
 # 彩色流光灯效  stream animation
-# 推荐速度：4  recommended animation speed: 4
-stream_info = [0, 0] # first led color, led index
 def stream(rgb):
-    for i in range(rgb.num_pixels/2):
-        led_color = (stream_info[0] + rgb.hue_step * stream_info[1]) % 256
-        rgb.set_hsv(led_color, rgb.sat, rgb.val, stream_info[1])
-        stream_info[1] = (stream_info[1] + 1) % rgb.num_pixels
-        if stream_info[1] == 0:
-            stream_info[0] = (stream_info[0] + rgb._step) % 256
+    for i in range(rgb.num_pixels):
+        rgb.set_hsv((rgb.hue + rgb.hue_step * i) % 256, rgb.sat, rgb.val, i)
+    rgb.increase_hue(rgb._step)
 
 # 纵向彩色流光灯效  vertical stream animation
-# 推荐速度：1  recommended animation speed: 1
-vstream_info = [0, 0] # first led color, led index
 def vertical_stream(rgb):
-    #at = supervisor.ticks_ms()
-    for j in range(0,2):
-        for i in range(0, len(rgb_index[vstream_info[1]])):
+    for j in range(0,len(rgb_index)):
+        for i in range(0, len(rgb_index[j])):
             rgb.set_hsv(
-                vstream_info[0] + vstream_info[1] * rgb.hue_step,
+                rgb.hue + j * rgb.hue_step,
                 rgb.sat,
                 rgb.val,
-                rgb_index[vstream_info[1]][i]
+                rgb_index[j][i]
             )
-        vstream_info[1] = (vstream_info[1] + 1) % len(rgb_index)
-        vstream_info[0] = (vstream_info[0] + rgb._step) % 256
-    #print('timeuse:',supervisor.ticks_ms()-at)
+    rgb.increase_hue(rgb._step)
 
 # 横向彩色流光灯效  horizontal stream animation
 # 推荐 hue_step: 20  recommended hue_step: 20
-hstream_info = [0, 0] # first led color, led index
 def horizontal_stream(rgb):
-    #at = supervisor.ticks_ms()
-    for j in range(0,2):
-        for i in range(0, len(rgb_index[hstream_info[1]])):
+    for j in range(0,len(rgb_index)):
+        for i in range(0, len(rgb_index[j])):
             rgb.set_hsv(
-                hstream_info[0] + i * rgb.hue_step,
+                rgb.hue + i * rgb.hue_step,
                 rgb.sat,
                 rgb.val,
-                rgb_index[hstream_info[1]][i]
+                rgb_index[j][i]
             )
-        hstream_info[1] = (hstream_info[1] + 1) % len(rgb_index)
-        if hstream_info[1] == 0:
-            hstream_info[0] = (hstream_info[0] + rgb._step) % 256
-    #print('timeuse:',supervisor.ticks_ms()-at)
+    rgb.increase_hue(rgb._step)
 
 
 
@@ -93,11 +78,13 @@ def init_rgb_modes_cycle_key(rgb):
             rgb_mode_index = rgb_modes_list.index(AnimationModes.STATIC)
         else:
             rgb_mode_index = rgb_modes_list.index(rgb.animation_mode)
+
         if rgb.animation_mode == AnimationModes.USER:
             user_animation_index = (user_animation_list.index(rgb.user_animation) + 1) % user_animation_num
             rgb.user_animation = user_animation_list[user_animation_index]
             if not user_animation_index == 0:
                 rgb_mode_index = rgb_mode_index - 1
+
         rgb_mode_index = (rgb_mode_index + 1) % rgb_modes_num
         rgb.animation_mode = rgb_modes_list[rgb_mode_index]
 
