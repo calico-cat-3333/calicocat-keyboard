@@ -74,18 +74,33 @@ def init_rgb_modes_cycle_key(rgb):
         AnimationModes.KNIGHT,
         AnimationModes.SWIRL
     ]
-    if not rgb.user_animation == None:
+    user_animation_list = [
+        stream,
+        vertical_stream,
+        horizontal_stream
+    ]
+    if not user_animation_list == []:
         rgb_modes_list.append(AnimationModes.USER)
+        if rgb.user_animation == None:
+            rgb.user_animation = user_animation_list[0]
     rgb_modes_num = len(rgb_modes_list)
+    user_animation_num = len(user_animation_list)
+
     def rgb_modes_cycle(*args, **kwargs):
         rgb.effect_init = True
         rgb_mode_index = 0
         if rgb.animation_mode == AnimationModes.STATIC_STANDBY:
-            rgb_mode_index = 0
+            rgb_mode_index = rgb_modes_list.index(AnimationModes.STATIC)
         else:
             rgb_mode_index = rgb_modes_list.index(rgb.animation_mode)
+        if rgb.animation_mode == AnimationModes.USER:
+            user_animation_index = (user_animation_list.index(rgb.user_animation) + 1) % user_animation_num
+            rgb.user_animation = user_animation_list[user_animation_index]
+            if not user_animation_index == 0:
+                rgb_mode_index = rgb_mode_index - 1
         rgb_mode_index = (rgb_mode_index + 1) % rgb_modes_num
         rgb.animation_mode = rgb_modes_list[rgb_mode_index]
+
     make_key(
         names=('RGB_MODES_CYCLE', 'RGB_CYC'),
         on_press=rgb_modes_cycle,
