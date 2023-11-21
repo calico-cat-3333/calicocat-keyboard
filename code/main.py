@@ -14,6 +14,7 @@ import user_animations
 import lcd
 
 keyboard = KMKKeyboard()
+
 rgb = RGB(
     pixel_pin=board.GP28,
     num_pixels=86,
@@ -25,12 +26,14 @@ rgb = RGB(
     user_animation=user_animations.stream,
     refresh_rate=30
 )
+rgbkp = user_animations.RGBwithKeyProcerss(rgb)
 # 添加 RGB_MODES_CYCLE / RGB_CYC 按键
 # add RGB_MODES_CYCLE / RGB_CYC key
 user_animations.init_rgb_modes_cycle_key(rgb)
 
 keyboard.modules.append(Layers())
 keyboard.modules.append(MouseKeys())
+keyboard.modules.append(rgbkp)
 keyboard.extensions.append(rgb)
 keyboard.extensions.append(MediaKeys())
 keyboard.extensions.append(lcd.LCDLockStatus())
