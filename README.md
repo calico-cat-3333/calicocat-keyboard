@@ -9,4 +9,6 @@ pcb 文件夹中也提供文件下载，需要使用嘉立创eda打开。
 
 case 文件夹中是外壳的dxf文件。
 
+keyboard-layout.json 是使用 [keyboard layout editor](http://www.keyboard-layout-editor.com) 设计的键位布局
+
 ![效果图](image.jpg)
