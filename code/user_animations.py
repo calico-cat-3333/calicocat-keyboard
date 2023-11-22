@@ -48,7 +48,7 @@ def horizontal_stream(rgb):
     rgb.increase_hue(rgb._step)
 
 # 当按下按键时改变rgb状态
-# 这一部分时试验性的
+# 这一部分是试验性的
 value_map = None
 # 当按下按键时点亮对应的led
 def brightens_when_pressed(rgb):
