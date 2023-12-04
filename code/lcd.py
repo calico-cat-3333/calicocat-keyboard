@@ -1,17 +1,13 @@
 import board
-import terminalio
 import displayio
 import busio
 import supervisor
 
 from adafruit_st7789 import ST7789
 
-from kmk.extensions.lock_status import LockStatus
 from kmk.extensions import Extension
-
-bitmap = displayio.OnDiskBitmap("spritemap.bmp")
-palette = bitmap.pixel_shader
-palette.make_transparent(0)
+from kmk.keys import make_key
+from kmk.handlers.stock import passthrough as handler_passthrough
 
 displayio.release_displays()
 
@@ -23,51 +19,25 @@ tft_rs = board.GP4
 display_bus = displayio.FourWire(spi, command=tft_dc, chip_select=tft_cs, reset = tft_rs)
 display = ST7789(display_bus, rotation=270, width=240, height=135, rowstart=40, colstart=53)
 
-splash = displayio.Group()
+# LCD 扩展基础，提供多功能切换，其对象将作为参数传入LCD功能扩展类
+# 本身只需要一个参数，dsiplay, 是 displayio.Display 对象
+class LCD(Extension):
+    def __init__(self, display):
+        self.display = display
+        self.group_list = []
+        self.default_group = displayio.Group()
+        self.group_list.append(self.default_group)
 
-group_lock = displayio.Group(scale=3, x=20, y=10)
-tilegrid_numlock = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=7, x=0, y=0)
-tilegrid_caplock = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=3, x=20, y=0)
-tilegrid_scrlock = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=11, x=40, y=0)
-
-group_layer = displayio.Group(scale=3, x=20, y=70)
-tilegrid_layer = displayio.TileGrid(bitmap, pixel_shader=palette, tile_width=16, tile_height=16, default_tile=4, x=0, y=0)
-tilegrid_cat = displayio.TileGrid(bitmap, pixel_shader=palette, width=2, tile_width=16, tile_height=16, x=30, y=0)
-tilegrid_cat[0] = 8
-tilegrid_cat[1] = 9
-
-
-class LCDLockStatus(LockStatus):
-    def update_text(self):
-        if self.get_num_lock():
-            tilegrid_numlock[0] = 0
-        else:
-            tilegrid_numlock[0] = 7
-        if self.get_caps_lock():
-            tilegrid_caplock[0] = 1
-        else:
-            tilegrid_caplock[0] = 3
-        if self.get_scroll_lock():
-            tilegrid_scrlock[0] = 2
-        else:
-            tilegrid_scrlock[0] = 11
-
-    def after_hid_send(self, sandbox):
-        super().after_hid_send(sandbox)  # Critically important. Do not forget
-        if self.report_updated:
-            #at = supervisor.ticks_ms()
-            self.update_text()
-            #print('lock status timeuse:',supervisor.ticks_ms()-at)
-
-class LCDLayerStatus(Extension):
-    def __init__(self):
-        self._onscreen_layer = -1
-
-    def update_text(self, layer):
-        if layer in [0, 1, 2]:
-            tilegrid_layer[0] = layer + 4
-        else:
-            tilegrid_layer[0] = 4
+        make_key(
+            names=('LCD_GROUP_NEXT', 'LCD_NXT'),
+            on_press=self._lcd_group_next,
+            on_release=handler_passthrough,
+        )
+        make_key(
+            names=('LCD_GROUP_PRIV', 'LCD_PRI'),
+            on_press=self._lcd_group_priv,
+            on_release=handler_passthrough,
+        )
 
     def on_runtime_enable(self, sandbox):
         return
@@ -76,24 +46,13 @@ class LCDLayerStatus(Extension):
         return
 
     def during_bootup(self, sandbox):
-        group_lock.append(tilegrid_numlock)
-        group_lock.append(tilegrid_caplock)
-        group_lock.append(tilegrid_scrlock)
-        group_layer.append(tilegrid_layer)
-        group_layer.append(tilegrid_cat)
-        splash.append(group_lock)
-        splash.append(group_layer)
-        display.show(splash)
+        self.show(self.default_group)
 
     def before_matrix_scan(self, sandbox):
         return
 
     def after_matrix_scan(self, sandbox):
-        if self._onscreen_layer != sandbox.active_layers[0]:
-            #at = supervisor.ticks_ms()
-            self.update_text(sandbox.active_layers[0])
-            self._onscreen_layer = sandbox.active_layers[0]
-            #print('layer status timeuse:',supervisor.ticks_ms()-at)
+        return
 
     def before_hid_send(self, sandbox):
         return
@@ -106,3 +65,33 @@ class LCDLayerStatus(Extension):
 
     def on_powersave_disable(self, sandbox):
         return
+
+    def show(self, group=None):
+        # displayio.Display.show() 即将被删除所以写这个函数作为替代
+        if group == None:
+            self.display.root_group = self.default_group
+        else:
+            self.display.root_group = group
+
+    def _lcd_group_next(self, *args, **kwargs):
+        group_index = self.group_list.index(self.display.root_group)
+        group_index = (group_index + 1) % len(self.group_list)
+        self.show(self.group_list[group_index])
+
+    def _lcd_group_priv(self, *args, **kwargs):
+        group_index = self.group_list.index(self.display.root_group)
+        group_index = (group_index - 1) % len(self.group_list)
+        self.show(self.group_list[group_index])
+
+    def new_group(self):
+        new_group = displayio.Group()
+        self.group_list.append(new_group)
+        return new_group
+
+    # 检查当前是否在显示这个 group
+    # 除了内置直接显示在 defalut_group 上的模块外，所有 LCD 功能模块都应该进行这一检查
+    # 如果没有显示，那么函数将直接退出，不进行任何操作
+    def group_on_showing(self,group):
+        if group == self.display.root_group:
+            return True
+        return False
