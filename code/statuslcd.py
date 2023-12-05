@@ -5,6 +5,8 @@ import supervisor
 from kmk.extensions.lock_status import LockStatus
 from kmk.extensions import Extension
 
+from gettime import get_time
+
 bitmap = displayio.OnDiskBitmap("spritemap.bmp")
 palette = bitmap.pixel_shader
 palette.make_transparent(0)
@@ -30,6 +32,7 @@ class LCDLockStatus(LockStatus):
         self.group_lock.append(self.tilegrid_scrlock)
         self.lcd.default_group.append(self.group_lock)
 
+    @get_time
     def update_text(self):
         if self.get_num_lock():
             self.tilegrid_numlock[0] = 0
@@ -47,15 +50,14 @@ class LCDLockStatus(LockStatus):
     def after_hid_send(self, sandbox):
         super().after_hid_send(sandbox)  # Critically important. Do not forget
         if self.report_updated:
-            #at = supervisor.ticks_ms()
             self.update_text()
-            #print('lock status timeuse:',supervisor.ticks_ms()-at)
 
 class LCDLayerStatus(Extension):
     def __init__(self, lcd):
         self._onscreen_layer = -1
         self.lcd = lcd
 
+    @get_time
     def update_text(self, layer):
         if layer in [0, 1, 2]:
             self.tilegrid_layer[0] = layer + 4
@@ -85,10 +87,8 @@ class LCDLayerStatus(Extension):
 
     def after_matrix_scan(self, sandbox):
         if self._onscreen_layer != sandbox.active_layers[0]:
-            #at = supervisor.ticks_ms()
             self.update_text(sandbox.active_layers[0])
             self._onscreen_layer = sandbox.active_layers[0]
-            #print('layer status timeuse:',supervisor.ticks_ms()-at)
 
     def before_hid_send(self, sandbox):
         return

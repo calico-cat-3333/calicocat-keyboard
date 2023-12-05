@@ -83,7 +83,7 @@ class LCD(Extension):
         group_index = (group_index - 1) % len(self.group_list)
         self.show(self.group_list[group_index])
 
-    def new_group(self):
+    def add_group(self):
         new_group = displayio.Group()
         self.group_list.append(new_group)
         return new_group
@@ -91,7 +91,7 @@ class LCD(Extension):
     # 检查当前是否在显示这个 group
     # 除了内置直接显示在 defalut_group 上的模块外，所有 LCD 功能模块都应该进行这一检查
     # 如果没有显示，那么函数将直接退出，不进行任何操作
-    def group_on_showing(self,group):
+    def group_on_showing(self, group):
         if group == self.display.root_group:
             return True
         return False
