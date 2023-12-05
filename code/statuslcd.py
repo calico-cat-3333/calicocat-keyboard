@@ -15,6 +15,7 @@ class LCDLockStatus(LockStatus):
     def __init__(self, lcd):
         super().__init__()
         self.lcd = lcd
+        self.show_info = [False, False, False]
 
     def during_bootup(self, sandbox):
         super().during_bootup(sandbox)
@@ -34,18 +35,24 @@ class LCDLockStatus(LockStatus):
 
     @get_time
     def update_text(self):
-        if self.get_num_lock():
-            self.tilegrid_numlock[0] = 0
-        else:
-            self.tilegrid_numlock[0] = 7
-        if self.get_caps_lock():
-            self.tilegrid_caplock[0] = 1
-        else:
-            self.tilegrid_caplock[0] = 3
-        if self.get_scroll_lock():
-            self.tilegrid_scrlock[0] = 2
-        else:
-            self.tilegrid_scrlock[0] = 11
+        if not self.get_num_lock() == self.show_info[0]:
+            self.show_info[0] = not self.show_info[0]
+            if self.show_info[0]:
+                self.tilegrid_numlock[0] = 0
+            else:
+                self.tilegrid_numlock[0] = 7
+        if not self.get_caps_lock() == self.show_info[1]:
+            self.show_info[1] = not self.show_info[1]
+            if self.show_info[1]:
+                self.tilegrid_caplock[0] = 1
+            else:
+                self.tilegrid_caplock[0] = 3
+        if not self.get_scroll_lock() == self.show_info[2]:
+            self.show_info[2] = not self.show_info[2]
+            if self.show_info[2]:
+                self.tilegrid_scrlock[0] = 2
+            else:
+                self.tilegrid_scrlock[0] = 11
 
     def after_hid_send(self, sandbox):
         super().after_hid_send(sandbox)  # Critically important. Do not forget
