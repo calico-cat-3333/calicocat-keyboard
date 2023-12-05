@@ -2,7 +2,7 @@ import board
 import terminalio
 import displayio
 import supervisor
-from adafruit_display_text import label
+from adafruit_display_text import bitmap_label as label
 
 from kmk.extensions import Extension
 from kmk.extensions.RGB import AnimationModes
