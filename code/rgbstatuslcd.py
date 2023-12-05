@@ -104,7 +104,7 @@ class LCDRGBStatus(Extension):
 
     def during_bootup(self, sandbox):
         self.group = self.lcd.add_group()
-        self.rgb_enable_text = label.Label(self.font, text='RGB ON', color=self.color, scale=2, x=10, y=10, anchor_point=(0.0, 0.0))
+        self.rgb_enable_text = label.Label(self.font, text='RGB ON ', color=self.color, scale=2, x=10, y=10, anchor_point=(0.0, 0.0))
         self.rgb_hue_text = label.Label(self.font, text='Hue:    ', color=self.color, scale=2, x=10, y=32, anchor_point=(0.0, 0.0))
         self.rgb_sat_text = label.Label(self.font, text='Sat:    ', color=self.color, scale=2, x=10, y=54, anchor_point=(0.0, 0.0))
         self.rgb_val_text = label.Label(self.font, text='Val:    ', color=self.color, scale=2, x=10, y=76, anchor_point=(0.0, 0.0))
