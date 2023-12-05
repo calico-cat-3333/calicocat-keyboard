@@ -13,6 +13,7 @@ from kmk.extensions.media_keys import MediaKeys
 import user_animations
 from lcd import LCD, display
 from statuslcd import LCDLayerStatus, LCDLockStatus
+from rgbstatuslcd import LCDRGBStatus
 
 keyboard = KMKKeyboard()
 
@@ -42,6 +43,7 @@ keyboard.extensions.append(lcdscr)
 keyboard.extensions.append(MediaKeys())
 keyboard.extensions.append(LCDLockStatus(lcdscr))
 keyboard.extensions.append(LCDLayerStatus(lcdscr))
+keyboard.extensions.append(LCDRGBStatus(lcdscr, rgb))
 
 keyboard.keymap = [[
     KC.ESC,  KC.F1,   KC.F2,   KC.F3,   KC.F4,   KC.F5,   KC.F6,   KC.F7,   KC.F8,   KC.F9,   KC.F10,  KC.F11,  KC.F12,  KC.PSCR, KC.INS,  KC.DEL,
