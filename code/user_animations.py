@@ -146,6 +146,7 @@ class RGBwithKeyProcerss(Module):
             86,86,86 # 这三个是虚拟灯
         ]
         self.rgb = rgb
+
     def during_bootup(self, keyboard):
         return
 
@@ -166,7 +167,7 @@ class RGBwithKeyProcerss(Module):
             dims_when_pressed,
             dims_when_pressed_rainbow
         ]:
-            self.dims_brightens_pk(keyboard, key, is_pressed, int_coord)
+            self.dims_brightens_pk(keyboard, is_pressed, int_coord)
         return key
 
     def before_hid_send(self, keyboard):
@@ -184,7 +185,7 @@ class RGBwithKeyProcerss(Module):
     def deinit(self, keyboard):
         pass
 
-    def dims_brightens_pk(self, keyboard, key, is_pressed, int_coord):
+    def dims_brightens_pk(self, keyboard, is_pressed, int_coord):
         global value_map
         if is_pressed:
             value_map[self._rgb_led_map[keyboard.coord_mapping.index(int_coord)]] = -1
