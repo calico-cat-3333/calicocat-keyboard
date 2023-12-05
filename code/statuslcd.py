@@ -33,7 +33,7 @@ class LCDLockStatus(LockStatus):
         self.group_lock.append(self.tilegrid_scrlock)
         self.lcd.default_group.append(self.group_lock)
 
-    @get_time
+    #@get_time
     def update_text(self):
         if not self.get_num_lock() == self.show_info[0]:
             self.show_info[0] = not self.show_info[0]
@@ -64,7 +64,7 @@ class LCDLayerStatus(Extension):
         self._onscreen_layer = -1
         self.lcd = lcd
 
-    @get_time
+    #@get_time
     def update_text(self, layer):
         if layer in [0, 1, 2]:
             self.tilegrid_layer[0] = layer + 4
