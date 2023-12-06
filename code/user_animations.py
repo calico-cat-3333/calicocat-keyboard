@@ -5,6 +5,8 @@ from kmk.modules import Module
 
 import supervisor
 
+from gettime import get_time
+
 # 将电路上的rgb排列转换为更常见的排列
 rgb_led_map = [
     [15,14,13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
@@ -17,12 +19,14 @@ rgb_led_map = [
 
 # animations
 # 彩色流光灯效  stream animation
+# @get_time
 def stream(rgb):
     for i in range(rgb.num_pixels):
         rgb.set_hsv((rgb.hue + rgb.hue_step * i) % 256, rgb.sat, rgb.val, i)
     rgb.increase_hue(rgb._step)
 
 # 纵向彩色流光灯效  vertical stream animation
+# @get_time
 def vertical_stream(rgb):
     for j in range(0,len(rgb_led_map)):
         for i in range(0, len(rgb_led_map[j])):
@@ -36,6 +40,7 @@ def vertical_stream(rgb):
 
 # 横向彩色流光灯效  horizontal stream animation
 # 推荐 hue_step: 20  recommended hue_step: 20
+# @get_time
 def horizontal_stream(rgb):
     for j in range(0,len(rgb_led_map)):
         for i in range(0, len(rgb_led_map[j])):

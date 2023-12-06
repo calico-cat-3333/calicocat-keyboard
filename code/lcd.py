@@ -12,6 +12,11 @@ from kmk.handlers.stock import passthrough as handler_passthrough
 displayio.release_displays()
 
 spi = busio.SPI(clock = board.GP2, MOSI = board.GP3)
+while not spi.try_lock():
+    pass
+spi.configure(baudrate=24000000) # Configure SPI for 24MHz
+spi.unlock()
+
 tft_cs = board.GP29
 tft_dc = board.GP5
 tft_rs = board.GP4

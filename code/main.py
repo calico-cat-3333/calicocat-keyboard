@@ -1,5 +1,12 @@
 print("Starting")
 
+import microcontroller
+# 超频到 150Mhz 或者也可以超频到 180Mhz
+# 网上一些人声称可以超频到 250Mhz 但是我比较保守，暂时只打算超频到 150Mhz
+# 警告：超频可能导致树莓派 pico 损坏，请注意小心
+microcontroller.cpu.frequency = 150000000
+# microcontroller.cpu.frequency = 180000000
+
 import board
 
 from kb import KMKKeyboard

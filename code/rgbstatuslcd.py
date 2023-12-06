@@ -40,7 +40,6 @@ class LCDRGBStatus(Extension):
             else:
                 self.rgb_enable_text.text = 'RGB OFF'
             self.info[0] = bool(self.rgb.enable)
-            print(self.info,self.rgb.enable)
 
         if not self.rgb.hue == self.info[1]:
             if self.rgb.animation_mode in hue_whitelist:
