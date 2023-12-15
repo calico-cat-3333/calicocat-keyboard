@@ -21,6 +21,7 @@ import user_animations
 from lcd import LCD, display
 from statuslcd import LCDLayerStatus, LCDLockStatus
 from rgbstatuslcd import LCDRGBStatus
+from calculator import LCDCalculator
 
 keyboard = KMKKeyboard()
 
@@ -45,6 +46,7 @@ user_animations.init_rgb_modes_cycle_key(rgb)
 keyboard.modules.append(Layers())
 keyboard.modules.append(MouseKeys())
 keyboard.modules.append(rgbkp)
+keyboard.modules.append(LCDCalculator(lcdscr))
 keyboard.extensions.append(rgb)
 keyboard.extensions.append(lcdscr)
 keyboard.extensions.append(MediaKeys())
