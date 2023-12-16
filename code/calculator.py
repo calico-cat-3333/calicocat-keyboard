@@ -1,8 +1,11 @@
 import board
 import terminalio
 import displayio
-import supervisor
 from math import *
+# 导入 decimal 供高精度计算使用
+# 占用内存过大，故放弃
+#import jepler_udecimal as decimal
+#import jepler_udecimal.utrig
 # bitmap_label 不工作，因为这将导致 pystack exhausted 堆栈溢出。
 # from adafruit_display_text import bitmap_label as label
 from adafruit_display_text import label
@@ -51,65 +54,49 @@ class LCDCalculator(Module):
 
     #@get_time
     def process_key(self, keyboard, key, is_pressed, int_coord):
-        #print('------------->key event:',key,is_pressed,int_coord)
         if not self.lcd.group_on_showing(self.group):
             # 如果退出时没有松开某个按键，那么当发生按键释放事件时仍然拦截一次
             if hasattr(key, 'FAKE_CODE'):
                 # 是修饰键
-                #print('is mod key')
                 if len(self.unreleased_modkeys) != 0 and is_pressed == False and key.code in self.unreleased_modkeys:
                     self.modkey_release(key.code)
                     self.unreleased_modkeys.discard(key.code)
-                    #print('in unreleased_modkeys,',key.code)
                     return
-                #print('send key event')
                 return key
 
             # 是常规按键
-            #print('is input key')
             if len(self.unreleased_keys) != 0 and is_pressed == False and key.code in self.unreleased_keys:
                 self.unreleased_keys.discard(key.code)
-                #print('in unreleased_keys,',key.code)
                 return
-            #print('send key event')
             return key
 
         if hasattr(key, 'FAKE_CODE'):
             # 是修饰键
-            #print('is mod key')
             if is_pressed:
                 #print('mod key pressed:',key.code)
                 self.modkey_press(key.code)
                 self.unreleased_modkeys.add(key.code)
                 # 修饰键按下是不需要刷新显示的
-                #print('out')
                 return
             # 防止进入该功能时有按键未松开
             if key.code in self.unreleased_modkeys:
                 self.modkey_release(key.code)
                 self.unreleased_modkeys.discard(key.code)
-                #print('mod key in unreleased_modkeys release')
                 return
-            #print('mod key released:',key.code)
             return key
 
         # 是常规按键
         if not (key.code >= 4 and key.code <= 82):
             # 排除非有效按键
-            #print('not input key')
             return key
         if is_pressed:
-            #print('key pressed:',key.code)
             self.key_operate(key.code)
             self.update_display()
             self.unreleased_keys.add(key.code)
-            #print('out')
             return
         if key.code in self.unreleased_keys:
             self.unreleased_keys.discard(key.code)
-            #print('key in unreleased_keys released:',key.code)
             return
-        #print('key released:',key.code)
         return key
 
     def before_hid_send(self, keyboard):
@@ -128,7 +115,6 @@ class LCDCalculator(Module):
         pass
 
     def key_operate(self, keycode):
-        #print('key operate:',keycode)
         if (keycode >=4 and keycode <= 39):
             self.char_insert_key(keycode - 4)
         elif keycode >= 44 and keycode <= 49:
@@ -180,29 +166,22 @@ class LCDCalculator(Module):
                     self.expr_history[0] = ''
                 self.ans = ''
                 self.update_display_list = [True, True]
-        #print('key operate end:',keycode)
 
     def char_insert_key(self, char):
-        #print('start char insert:',char)
         self.check_clear_display()
         self.expr = self.expr[:self.cursor_pos] + _char_map[self.shift_pressed][char] + self.expr[self.cursor_pos:]
         self.cursor_pos = self.cursor_pos + 1
         self.update_display_list[0] = True
-        #print('char insert end')
 
     def modkey_press(self, modcode):
-        #print('modkey start',modcode)
         if modcode == 0x02 or modcode == 0x20:
             self.shift_pressed = True
-        #print('modkey end')
 
     def modkey_release(self, modcode):
-        #print('modkey release start',modcode)
         if modcode == 0x02 and (not 0x20 in self.unreleased_modkeys):
             self.shift_pressed = False
         elif modcode == 0x20 and (not 0x02 in self.unreleased_modkeys):
             self.shift_pressed = False
-        #print('modkey release end')
 
     def check_clear_display(self):
         if len(self.ans) != 0:
@@ -222,8 +201,6 @@ class LCDCalculator(Module):
         self.expr_history_showing = 0
 
     def update_display(self):
-        #print('update_display start')
-        #print(self.ans)
         # 更新算式显示
         disp_expr = ''
         expr_len = len(self.expr)
@@ -256,15 +233,14 @@ class LCDCalculator(Module):
             else:
                 self.ans_label.scale = 2
             self.ans_label.text = self.ans
-        #print('update_display end')
 
     def do_calc(self):
-        #print('do calc start')
-        #print(self.expr)
         try:
             ans = eval(self.expr)
             if type(ans) == int or type(ans) == bool:
                 self.ans = str(ans)
+            elif type(ans) == str:
+                self.ans = ans
             elif type(ans) == float:
                 self.ans = str(round(ans, self.decimal_places))
             else:
@@ -273,11 +249,9 @@ class LCDCalculator(Module):
                 self.ans = 'Output Limit Exceed'
         except Exception as e:
             self.ans = 'Error'
-        #print(self.ans)
         self.update_display_list[1] = True
         self.expr_history.insert(1, self.expr)
         self.expr_history_showing = 1
         self.expr_history[0] = ''
         if len(self.expr_history) > self.expr_history_length:
             self.expr_history.pop()
-        #print('do calc end')

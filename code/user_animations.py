@@ -3,8 +3,6 @@ from kmk.extensions.RGB import AnimationModes
 from kmk.handlers.stock import passthrough as handler_passthrough
 from kmk.modules import Module
 
-import supervisor
-
 from gettime import get_time
 
 # 将电路上的rgb排列转换为更常见的排列

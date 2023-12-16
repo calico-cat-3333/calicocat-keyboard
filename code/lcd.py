@@ -1,7 +1,6 @@
 import board
 import displayio
 import busio
-import supervisor
 
 from adafruit_st7789 import ST7789
 

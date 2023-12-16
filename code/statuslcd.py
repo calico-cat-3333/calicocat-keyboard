@@ -1,6 +1,5 @@
 import board
 import displayio
-import supervisor
 
 from kmk.extensions.lock_status import LockStatus
 from kmk.extensions import Extension
