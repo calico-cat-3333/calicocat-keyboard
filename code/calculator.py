@@ -17,6 +17,9 @@ from gettime import get_time
 _char_map = [r"abcdefghijklmnopqrstuvwxyz1234567890 -=[]\;'`,./",
              r'ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*() _+{}|:"~<>?']
 
+# 虽然说是个计算器，但是它的工作原理是把输入字符串直接丢到 eval 函数里运行
+# 所以可以整一点花活，比如输入 exec('import foo') 来导入某些东西，或者当作一个受限的 Python 终端使用
+# 这可能导致键盘出错甚至损坏，因此这个模块将永远是试验性的
 class LCDCalculator(Module):
     def __init__(self, lcd, history_length = 8, cursor_style = '|', decimal_places = 5):
         self.lcd = lcd
@@ -38,7 +41,7 @@ class LCDCalculator(Module):
     def during_bootup(self, keyboard):
         self.group = self.lcd.add_group()
         self.expr_label = label.Label(self.font, text=' '*20, color=self.color, scale=2, x=0, y=10, anchor_point=(0.0, 0.0))
-        self.ans_label = label.Label(self.font, text=' '*40, color=self.color, scale=2, x=0, y=40, anchor_point=(0.0, 0.0))
+        self.ans_label = label.Label(self.font, text=' '*40+'\n'+' '*40, color=self.color, scale=2, x=0, y=40, anchor_point=(0.0, 0.0))
         self.hint_label = label.Label(self.font, text='Experimental\nSimple Calculator', color=self.color, x=5, y=100, anchor_point=(0.0, 0.0))
         self.expr_label.text = '|'
         self.group.append(self.expr_label)
@@ -237,16 +240,17 @@ class LCDCalculator(Module):
     def do_calc(self):
         try:
             ans = eval(self.expr)
-            if type(ans) == int or type(ans) == bool:
-                self.ans = str(ans)
-            elif type(ans) == str:
+            if type(ans) == str:
                 self.ans = ans
             elif type(ans) == float:
                 self.ans = str(round(ans, self.decimal_places))
             else:
-                self.ans = 'Error'
-            if len(self.ans) > 38:
+                # int bool list .....
+                self.ans = str(ans)
+            if len(self.ans) > 80:
                 self.ans = 'Output Limit Exceed'
+            elif len(self.ans) > 40:
+                self.ans = self.ans[:40] + '\n' + self.ans[40:]
         except Exception as e:
             self.ans = 'Error'
         self.update_display_list[1] = True
