@@ -11,7 +11,8 @@ bootcfg(
     # optional:
     source = board.GP15,
     boot_device = 0,
-    cdc = False,
+    cdc_console = False,
+    cdc_data = False,
     midi = False,
     nkro = False,
     storage = False,

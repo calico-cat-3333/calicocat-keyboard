@@ -2,6 +2,14 @@ import board
 import displayio
 import busio
 
+# 兼容 circuitpython 8 和 circuitpython 9
+try:
+    from fourwire import FourWire
+    print('use fourwire module on circuitpython 9')
+except:
+    from displayio import FourWire
+    print('use displayio module on circuitpython 8')
+
 from adafruit_st7789 import ST7789
 
 from kmk.extensions import Extension
@@ -20,7 +28,7 @@ tft_cs = board.GP29
 tft_dc = board.GP5
 tft_rs = board.GP4
 
-display_bus = displayio.FourWire(spi, command=tft_dc, chip_select=tft_cs, reset = tft_rs)
+display_bus = FourWire(spi, command=tft_dc, chip_select=tft_cs, reset = tft_rs)
 display = ST7789(display_bus, rotation=270, width=240, height=135, rowstart=40, colstart=53)
 
 # LCD 扩展基础，提供多功能切换，其对象将作为参数传入LCD功能扩展类
