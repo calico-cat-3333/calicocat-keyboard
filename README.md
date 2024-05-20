@@ -15,6 +15,36 @@ keyboard-layout.json 是使用 [keyboard layout editor](http://www.keyboard-layo
 
 我目前已经使用超频版本固件约半年，未发现严重问题。
 
+## 有用的提示
+
+### 升级CircuitPython
+
+参考[https://docs.circuitpython.org/en/latest/shared-bindings/microcontroller/index.html](https://docs.circuitpython.org/en/latest/shared-bindings/microcontroller/index.html)，可以通过进入REPL后执行以下代码重启到UF2模式以便更新CircuitPython
+
+```python
+import microcontroller
+microcontroller.on_next_reset(microcontroller.RunMode.UF2)
+microcontroller.reset()
+```
+
+### 重命名CIRCUITPY驱动器
+
+参考[https://learn.adafruit.com/welcome-to-circuitpython/renaming-circuitpy](https://learn.adafruit.com/welcome-to-circuitpython/renaming-circuitpy)，用以下内容替换boot.py的内容，然后重启开发板/拔下再插入键盘，然后将boot.py恢复到之前的内容。（可以将KMKFW替换为少于11字符的任意内容）
+
+```python
+import storage
+
+storage.remount("/", readonly=False)
+
+m = storage.getmount("/")
+m.label = "KMKFW"
+
+storage.remount("/", readonly=True)
+
+storage.enable_usb_drive()
+```
+
+
 ## 已知问题
 
 在使用此键盘时，会有偶发的键盘突然不停输入最后按下的按键的情况，似乎是按键松开事件没有正确传入电脑。由于此问题发生偶然性很大，我没有找到稳定的复现方法，故暂时无法定位修复。临时的解决方案是在出现此问题时将键盘拔下再重新插入即可。
