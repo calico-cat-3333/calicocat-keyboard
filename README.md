@@ -1,7 +1,7 @@
 # calicocat-keyboard
 使用YD-RP2040（RPI pico兼容开发板）作为主控的键盘，带 RGB、旋钮和小屏幕，支持热插拔，使用kmk固件
 
-code 文件夹中是键盘的固件代码，需要配合 circuitpython 和 [kmk](http://kmkfw.io/) 使用，并需要 [Adafruit_CircuitPython_NeoPixel](https://github.com/adafruit/Adafruit_CircuitPython_NeoPixel) [Adafruit_CircuitPython_ST7789](https://github.com/adafruit/Adafruit_CircuitPython_ST7789) [Adafruit_CircuitPython_Display_Text](https://github.com/adafruit/Adafruit_CircuitPython_Display_Text) 三个库。
+code 文件夹中是键盘的固件代码，需要配合 circuitpython 和 [kmk](http://kmkfw.io/) 使用，并需要 [Adafruit_CircuitPython_NeoPixel](https://github.com/adafruit/Adafruit_CircuitPython_NeoPixel) [Adafruit_CircuitPython_ST7789](https://github.com/adafruit/Adafruit_CircuitPython_ST7789) [Adafruit_CircuitPython_Display_Text](https://github.com/adafruit/Adafruit_CircuitPython_Display_Text) 三个库，另外不要忘记删除开发板中自带的 `code.py` 文件。
 
 2024.5.20 update：当前 circuitpython 9 似乎存在一些执行效率上的问题，目前推荐使用 [circuitpython 8](https://adafruit-circuit-python.s3.amazonaws.com/bin/vcc_gnd_yd_rp2040/en_GB/adafruit-circuitpython-vcc_gnd_yd_rp2040-en_GB-8.2.9.uf2)
 

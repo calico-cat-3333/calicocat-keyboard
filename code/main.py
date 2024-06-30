@@ -8,6 +8,7 @@ microcontroller.cpu.frequency = 150000000
 # microcontroller.cpu.frequency = 180000000
 
 import board
+import os
 
 from kb import KMKKeyboard
 from kmk.keys import KC
@@ -26,6 +27,11 @@ from calculator import LCDCalculator
 keyboard = KMKKeyboard()
 
 lcdscr = LCD(display)
+
+# circuitpython 9 上需要进一步降低 refresh_rate
+refresh_rate = 30
+if os.uname().release[0] == '9':
+    refresh_rate = 15
 
 rgb = RGB(
     pixel_pin=board.GP28,
