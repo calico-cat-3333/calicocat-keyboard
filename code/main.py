@@ -4,7 +4,7 @@ import board
 import os
 
 from kb import KMKKeyboard
-from kmk.keys import KC
+from kmk.keys import KC, make_key
 
 from kmk.modules.layers import Layers
 from kmk.modules.mouse_keys import MouseKeys
