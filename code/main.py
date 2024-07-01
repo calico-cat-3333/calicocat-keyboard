@@ -1,12 +1,5 @@
 print("Starting")
 
-import microcontroller
-# 超频到 150Mhz 或者也可以超频到 180Mhz
-# 网上一些人声称可以超频到 250Mhz 但是我比较保守，暂时只打算超频到 150Mhz
-# 警告：超频可能导致树莓派 pico 损坏，请注意小心
-microcontroller.cpu.frequency = 150000000
-# microcontroller.cpu.frequency = 180000000
-
 import board
 import os
 
@@ -21,8 +14,6 @@ from kmk.extensions.media_keys import MediaKeys
 import user_animations
 from lcd import LCD, display
 from statuslcd import LCDLayerStatus, LCDLockStatus
-from rgbstatuslcd import LCDRGBStatus
-from calculator import LCDCalculator
 
 keyboard = KMKKeyboard()
 
@@ -36,29 +27,45 @@ if os.uname().release[0] == '9':
 rgb = RGB(
     pixel_pin=board.GP28,
     num_pixels=86,
+    hue_default=110,
     val_limit=30,
     val_default=20,
     val_step=1,
     animation_speed=4,
-    animation_mode=AnimationModes.USER,
-    user_animation=user_animations.stream,
+    animation_mode=AnimationModes.STATIC,
     refresh_rate=30
 )
-rgbkp = user_animations.RGBwithKeyProcerss(rgb)
+
 # 添加 RGB_MODES_CYCLE / RGB_CYC 按键
 # add RGB_MODES_CYCLE / RGB_CYC key
-user_animations.init_rgb_modes_cycle_key(rgb)
+rgb_modes_list = [
+    AnimationModes.STATIC,
+    AnimationModes.BREATHING,
+    AnimationModes.RAINBOW,
+    AnimationModes.BREATHING_RAINBOW
+]
+rgb_modes_num = len(rgb_modes_list)
+
+def rgb_modes_cycle(*args, **kwargs):
+    rgb.effect_init = True
+    current_rgb_mode = 0
+    if rgb.animation_mode == AnimationModes.STATIC_STANDBY:
+        current_rgb_mode = rgb_modes_list.index(AnimationModes.STATIC)
+    else:
+        current_rgb_mode = rgb_modes_list.index(rgb.animation_mode)
+
+    current_rgb_mode = (current_rgb_mode + 1) % rgb_modes_num
+    rgb.animation_mode = rgb_modes_list[current_rgb_mode]
+
+make_key(names=('RGB_MODES_CYCLE', 'RGB_CYC'), on_press=rgb_modes_cycle)
 
 keyboard.modules.append(Layers())
 keyboard.modules.append(MouseKeys())
-keyboard.modules.append(rgbkp)
-keyboard.modules.append(LCDCalculator(lcdscr))
 keyboard.extensions.append(rgb)
 keyboard.extensions.append(lcdscr)
 keyboard.extensions.append(MediaKeys())
 keyboard.extensions.append(LCDLockStatus(lcdscr))
 keyboard.extensions.append(LCDLayerStatus(lcdscr))
-keyboard.extensions.append(LCDRGBStatus(lcdscr, rgb))
 
 keyboard.keymap = [[
     KC.ESC,  KC.F1,   KC.F2,   KC.F3,   KC.F4,   KC.F5,   KC.F6,   KC.F7,   KC.F8,   KC.F9,   KC.F10,  KC.F11,  KC.F12,  KC.PSCR, KC.INS,  KC.DEL,

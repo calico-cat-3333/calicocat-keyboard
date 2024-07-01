@@ -4,8 +4,6 @@ import displayio
 from kmk.extensions.lock_status import LockStatus
 from kmk.extensions import Extension
 
-from gettime import get_time
-
 bitmap = displayio.OnDiskBitmap("spritemap.bmp")
 palette = bitmap.pixel_shader
 palette.make_transparent(0)
