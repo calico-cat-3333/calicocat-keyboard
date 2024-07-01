@@ -1,5 +1,8 @@
 # calicocat-keyboard
+
 使用YD-RP2040（RPI pico兼容开发板）作为主控的键盘，带 RGB、旋钮和小屏幕，支持热插拔，使用kmk固件
+
+当前分支为 lite 分支，其中储存的固件代码为精简版，相较于[主分支](https://github.com/calico-cat-3333/calicocat-keyboard/tree/master)中的标准版，此版本没有进行超频，去除了计算器模块、RGB 状态显示模块、自制的 RGB 动画等复杂的功能。
 
 code 文件夹中是键盘的固件代码，需要配合 circuitpython 和 [kmk](http://kmkfw.io/) 使用，并需要 [Adafruit_CircuitPython_NeoPixel](https://github.com/adafruit/Adafruit_CircuitPython_NeoPixel) [Adafruit_CircuitPython_ST7789](https://github.com/adafruit/Adafruit_CircuitPython_ST7789) [Adafruit_CircuitPython_Display_Text](https://github.com/adafruit/Adafruit_CircuitPython_Display_Text) 三个库，另外不要忘记删除开发板中自带的 `code.py` 文件。
 
@@ -12,10 +15,6 @@ pcb 文件夹中也提供文件下载，需要使用嘉立创eda打开。
 case 文件夹中是外壳的dxf文件。
 
 keyboard-layout.json 是使用 [keyboard layout editor](http://www.keyboard-layout-editor.com) 设计的键位布局
-
-警告：此版本的固件默认超频到 150MHz, 如果您不希望在超频的情况下使用此键盘，您应该注释 `mian.py` 的第 7 行。不过这会导致额外的输入延迟等。
-
-我目前已经使用超频版本固件约半年，未发现严重问题。
 
 ## 有用的提示
 
