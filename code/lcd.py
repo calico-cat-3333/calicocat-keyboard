@@ -14,7 +14,6 @@ from adafruit_st7789 import ST7789
 
 from kmk.extensions import Extension
 from kmk.keys import make_key
-from kmk.handlers.stock import passthrough as handler_passthrough
 
 displayio.release_displays()
 
@@ -42,13 +41,11 @@ class LCD(Extension):
 
         make_key(
             names=('LCD_GROUP_NEXT', 'LCD_NXT'),
-            on_press=self._lcd_group_next,
-            on_release=handler_passthrough,
+            on_press=self._lcd_group_next
         )
         make_key(
             names=('LCD_GROUP_PRIV', 'LCD_PRI'),
-            on_press=self._lcd_group_priv,
-            on_release=handler_passthrough,
+            on_press=self._lcd_group_priv
         )
 
     def on_runtime_enable(self, sandbox):

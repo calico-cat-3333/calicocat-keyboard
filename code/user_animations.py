@@ -1,6 +1,5 @@
 from kmk.keys import make_key
 from kmk.extensions.RGB import AnimationModes
-from kmk.handlers.stock import passthrough as handler_passthrough
 from kmk.modules import Module
 
 from gettime import get_time
@@ -244,5 +243,4 @@ def init_rgb_modes_cycle_key(rgb):
     make_key(
         names=('RGB_MODES_CYCLE', 'RGB_CYC'),
         on_press=rgb_modes_cycle,
-        on_release=handler_passthrough,
     )

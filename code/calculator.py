@@ -11,6 +11,7 @@ from math import *
 from adafruit_display_text import label
 
 from kmk.modules import Module
+from kmk.keys import ModifierKey, KeyboardKey
 
 from gettime import get_time
 
@@ -59,22 +60,24 @@ class LCDCalculator(Module):
     def process_key(self, keyboard, key, is_pressed, int_coord):
         if not self.lcd.group_on_showing(self.group):
             # 如果退出时没有松开某个按键，那么当发生按键释放事件时仍然拦截一次
-            if hasattr(key, 'FAKE_CODE'):
-                # 是修饰键
+            if len(self.unreleased_modkeys) == 0 and len(self.unreleased_keys) == 0:
+                return key
+            # 是修饰键
+            if isinstance(key, ModifierKey):
                 if len(self.unreleased_modkeys) != 0 and is_pressed == False and key.code in self.unreleased_modkeys:
                     self.modkey_release(key.code)
                     self.unreleased_modkeys.discard(key.code)
                     return
-                return key
 
             # 是常规按键
-            if len(self.unreleased_keys) != 0 and is_pressed == False and key.code in self.unreleased_keys:
-                self.unreleased_keys.discard(key.code)
-                return
+            if isinstance(key, KeyboardKey):
+                if len(self.unreleased_keys) != 0 and is_pressed == False and key.code in self.unreleased_keys:
+                    self.unreleased_keys.discard(key.code)
+                    return
             return key
 
-        if hasattr(key, 'FAKE_CODE'):
-            # 是修饰键
+        # 是修饰键
+        if isinstance(key, ModifierKey):
             if is_pressed:
                 #print('mod key pressed:',key.code)
                 self.modkey_press(key.code)
@@ -86,20 +89,20 @@ class LCDCalculator(Module):
                 self.modkey_release(key.code)
                 self.unreleased_modkeys.discard(key.code)
                 return
-            return key
 
         # 是常规按键
-        if not (key.code >= 4 and key.code <= 82):
-            # 排除非有效按键
-            return key
-        if is_pressed:
-            self.key_operate(key.code)
-            self.update_display()
-            self.unreleased_keys.add(key.code)
-            return
-        if key.code in self.unreleased_keys:
-            self.unreleased_keys.discard(key.code)
-            return
+        if isinstance(key, KeyboardKey):
+            if not (key.code >= 4 and key.code <= 82):
+                # 排除非有效按键
+                return key
+            if is_pressed:
+                self.key_operate(key.code)
+                self.update_display()
+                self.unreleased_keys.add(key.code)
+                return
+            if key.code in self.unreleased_keys:
+                self.unreleased_keys.discard(key.code)
+                return
         return key
 
     def before_hid_send(self, keyboard):
