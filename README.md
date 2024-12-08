@@ -4,7 +4,7 @@
 
 当前分支为 lite 分支，其中储存的固件代码为精简版，相较于[主分支](https://github.com/calico-cat-3333/calicocat-keyboard/tree/master)中的标准版，此版本没有进行超频，去除了计算器模块、RGB 状态显示模块、自制的 RGB 动画等复杂的功能。
 
-code 文件夹中是键盘的固件代码，需要配合 circuitpython 和 [kmk](http://kmkfw.io/) 使用，并需要 [Adafruit_CircuitPython_NeoPixel](https://github.com/adafruit/Adafruit_CircuitPython_NeoPixel) [Adafruit_CircuitPython_ST7789](https://github.com/adafruit/Adafruit_CircuitPython_ST7789) [Adafruit_CircuitPython_Display_Text](https://github.com/adafruit/Adafruit_CircuitPython_Display_Text) 三个库，另外不要忘记删除开发板中自带的 `code.py` 文件。
+code 文件夹中是键盘的固件代码，需要配合 circuitpython 和 [kmk](https://github.com/KMKfw/kmk_firmware) 使用，并需要 [Adafruit_CircuitPython_NeoPixel](https://github.com/adafruit/Adafruit_CircuitPython_NeoPixel) [Adafruit_CircuitPython_ST7789](https://github.com/adafruit/Adafruit_CircuitPython_ST7789) [Adafruit_CircuitPython_Display_Text](https://github.com/adafruit/Adafruit_CircuitPython_Display_Text) 三个库，另外不要忘记删除开发板中自带的 `code.py` 文件。
 
 2024.5.20 update：当前 circuitpython 9 似乎存在一些执行效率上的问题，目前推荐使用 circuitpython 8, 如果你也使用 YD-RP2040, 那么可以从[这个链接](https://adafruit-circuit-python.s3.amazonaws.com/bin/vcc_gnd_yd_rp2040/en_GB/adafruit-circuitpython-vcc_gnd_yd_rp2040-en_GB-8.2.10.uf2)下载适用于 YD-RP2040 的 circuitpython 8.2.10
 
